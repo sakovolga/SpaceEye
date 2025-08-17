@@ -1,0 +1,68 @@
+# created by virtualenv automatically
+# Django
+*.log
+*.pot
+*.pyc
+__pycache__/
+db.sqlite3
+db.sqlite3-journal
+media/
+
+# Environment files
+../../.env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*.iml
+workspace.xml
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Build/compiled files
+build/
+dist/
+*.egg-info/
+*.manifest
+*.spec
+
+# Node.js (если используется)
+node_modules/
+npm-debug.log*
+
+# Debugging
+*.mo
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Visual Studio Code
+.history/
+
+# Static files (Django)
+staticfiles/
+static/collected/
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+
+# Pytest
+.pytest_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints
