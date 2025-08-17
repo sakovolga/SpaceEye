@@ -13,7 +13,7 @@ def index(request):
     if cached_data:
         return render(request, 'main/index.html', {'nasa_data': cached_data})
 
-    api_key = getattr(settings, 'NASA_API_KEY', 'DEMO_KEY')
+    api_key = settings.NASA_API_KEY
 
     try:
         response = requests.get(
