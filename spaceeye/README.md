@@ -23,10 +23,10 @@ The app caches API responses for better performance and supports date/sol select
 ## 🌠 Screenshots
 
 ### Astronomy Picture of the Day (APOD)
-![APOD Example](https://apod.nasa.gov/apod/image/2501/MercuryTransit2025.jpg)
+![APOD Example](https://apod.nasa.gov/apod/image/2508/PerseidsDurdleDoor_Dury_960.jpg)
 
 ### Mars Rover Photos
-![Mars Rover Example](https://mars.nasa.gov/system/news_items/main_images/9513_PIA26324-FigureA-web.jpg)
+![Mars Rover Example](https://mars.nasa.gov/mars2020-raw-images/pub/ods/surface/sol/00516/ids/edr/browse/edl/EAE_0516_0712748775_129ECM_N0261222EDLC00516_0010LUJ01_1200.jpg)
 
 ---
 ## ⚙️ Installation & Setup
