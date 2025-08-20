@@ -131,6 +131,6 @@ NASA_API_KEY = os.getenv('NASA_API_KEY', 'demo-key')
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'TIMEOUT': 86400,
+        'LOCATION': 'unique-snowflake',
     }
 }

@@ -1,0 +1,243 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Mars Rover Photos - NASA Explorer{% endblock %}
+
+{% block extra_css %}
+<style>
+    .mars-photo {
+        margin-bottom: 1.5rem;
+        transition: transform 0.3s ease;
+    }
+    .mars-photo:hover {
+        transform: translateY(-5px);
+    }
+    .mars-photo img {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+    .photo-info {
+        background: rgba(0, 0, 0, 0.7);
+        padding: 0.5rem;
+        border-radius: 0 0 8px 8px;
+        margin-top: -4px;
+    }
+    .rover-stats {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">🔴 Mars Rover Photos</h1>
+        
+        <!-- Rover and Sol Selector -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Select Rover and Mission Day</h5>
+                <form method="get" class="row g-3">
+                    <div class="col-md-4">
+                        <label for="rover" class="form-label">Rover:</label>
+                        <select name="rover" id="rover" class="form-select" onchange="updateSolInfo()">
+                            {% for rover in rover_options %}
+                                <option value="{{ rover.value }}"
+                                        {% if rover.value == selected_rover %}selected{% endif %}>
+                                    {{ rover.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="sol" class="form-label">Sol (Martian Day):</label>
+                        <input type="number" name="sol" id="sol" class="form-control"
+                               value="{{ selected_sol }}" min="0" max="4000">
+                        <small class="form-text text-muted" id="sol-info">
+                            Sol is a Martian solar day (~24h 37m)
+                        </small>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">&nbsp;</label>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary flex-fill">
+                                Get Photos
+                            </button>
+                            <button type="button" class="btn btn-outline-primary flex-fill" onclick="getRandomPhotos()">
+                                Random Sol
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Rover Info -->
+                <div class="rover-stats mt-3">
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <strong>Current Rover:</strong><br>
+                            <span class="text-primary">{{ selected_rover|title }}</span>
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Mission Sol:</strong><br>
+                            <span class="text-info">{{ selected_sol }}</span>
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Photos Found:</strong><br>
+                            <span class="text-success">{{ photos_data.total_photos|default:0 }}</span>
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Status:</strong><br>
+                            <span class="text-warning">Active</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Photos Grid -->
+        {% if photos_data.error %}
+            <div class="alert alert-warning">
+                <h4>⚠️ {{ photos_data.error }}</h4>
+                <p>Try a different rover or sol number. Some rovers may not have taken photos on certain days.</p>
+            </div>
+        {% elif photos_data.photos %}
+            <div class="row">
+                {% for photo in photos_data.photos %}
+                    <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mb-4">
+                        <div class="mars-photo">
+                            <img src="{{ photo.img_src }}"
+                                 alt="Mars photo by {{ photo.rover.name }}"
+                                 onclick="openPhotoModal('{{ photo.img_src }}', '{{ photo.rover.name }}', '{{ photo.camera.full_name }}', '{{ photo.earth_date }}', {{ photo.sol }})"
+                                 loading="lazy">
+                            <div class="photo-info">
+                                <small>
+                                    <strong>📷 {{ photo.camera.name }}</strong><br>
+                                    <span class="text-muted">{{ photo.camera.full_name }}</span><br>
+                                    🌍 {{ photo.earth_date }} | 🔴 Sol {{ photo.sol }}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="text-center mt-4">
+                <div class="card d-inline-block">
+                    <div class="card-body">
+                        <h5>Mission Summary</h5>
+                        <p class="mb-0">
+                            Showing <strong>{{ photos_data.total_photos }}</strong> photos from
+                            <strong>{{ photos_data.rover_name }}</strong> on Sol <strong>{{ photos_data.sol }}</strong>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                <h4>📷 No photos available</h4>
+                <p>{{ selected_rover|title }} rover didn't take any photos on Sol {{ selected_sol }}.
+                   Try a different sol number or rover.</p>
+                <div class="mt-3">
+                    <h6>💡 Try these popular sols:</h6>
+                    <div class="btn-group" role="group">
+                        <a href="?rover={{ selected_rover }}&sol=1" class="btn btn-outline-light btn-sm">Sol 1</a>
+                        <a href="?rover={{ selected_rover }}&sol=100" class="btn btn-outline-light btn-sm">Sol 100</a>
+                        <a href="?rover={{ selected_rover }}&sol=500" class="btn btn-outline-light btn-sm">Sol 500</a>
+                        <a href="?rover={{ selected_rover }}&sol=1000" class="btn btn-outline-light btn-sm">Sol 1000</a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Photo Modal -->
+<div class="modal fade" id="photoModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content bg-dark">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title" id="photoModalTitle">Mars Photo</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalPhoto" src="" alt="" class="img-fluid mb-3">
+                <div id="modalPhotoInfo"></div>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a id="modalDownload" href="" target="_blank" class="btn btn-primary">
+                    📥 View Full Size
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const roverInfo = {
+    'curiosity': { maxSol: 4000, status: 'Active', landing: '2012-08-05' },
+    'opportunity': { maxSol: 5352, status: 'Mission Complete', landing: '2004-01-25' },
+    'spirit': { maxSol: 2208, status: 'Mission Complete', landing: '2004-01-04' },
+    'perseverance': { maxSol: 1000, status: 'Active', landing: '2021-02-18' }
+};
+
+function updateSolInfo() {
+    const roverSelect = document.getElementById('rover');
+    const solInput = document.getElementById('sol');
+    const solInfo = document.getElementById('sol-info');
+
+    const selectedRover = roverSelect.value;
+    const info = roverInfo[selectedRover];
+
+    if (info) {
+        solInput.max = info.maxSol;
+        solInfo.innerHTML = `Max Sol: ${info.maxSol} | Status: ${info.status} | Landing: ${info.landing}`;
+    }
+}
+
+function openPhotoModal(imgSrc, roverName, cameraName, earthDate, sol) {
+    document.getElementById('photoModalTitle').textContent = `${roverName} - ${cameraName}`;
+    document.getElementById('modalPhoto').src = imgSrc;
+    document.getElementById('modalPhoto').alt = `Mars photo by ${roverName}`;
+    document.getElementById('modalDownload').href = imgSrc;
+
+    document.getElementById('modalPhotoInfo').innerHTML = `
+        <div class="row text-start">
+            <div class="col-md-6">
+                <strong>Rover:</strong> ${roverName}<br>
+                <strong>Camera:</strong> ${cameraName}
+            </div>
+            <div class="col-md-6">
+                <strong>Earth Date:</strong> ${earthDate}<br>
+                <strong>Mars Sol:</strong> ${sol}
+            </div>
+        </div>
+    `;
+
+    const modal = new bootstrap.Modal(document.getElementById('photoModal'));
+    modal.show();
+}
+
+// Random Sol button
+function getRandomPhotos() {
+    const roverSelect = document.getElementById('rover');
+    const selectedRover = roverSelect.value;
+    const info = roverInfo[selectedRover];
+    const randomSol = Math.floor(Math.random() * Math.min(info.maxSol, 2000)) + 1;
+
+    window.location.href = `?rover=${selectedRover}&sol=${randomSol}`;
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    updateSolInfo();
+});
+</script>
+{% endblock %}
