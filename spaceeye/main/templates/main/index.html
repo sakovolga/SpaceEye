@@ -93,7 +93,7 @@
 
 {% block extra_js %}
 <script>
-// Функция для быстрой навигации по датам
+
 function navigateDate(days) {
     const currentDate = new Date('{{ selected_date|default:"" }}' || new Date());
     currentDate.setDate(currentDate.getDate() + days);
@@ -107,7 +107,6 @@ function navigateDate(days) {
     }
 }
 
-// Добавляем кнопки навигации
 document.addEventListener('DOMContentLoaded', function() {
     const cardBody = document.querySelector('#apod-content .card-body');
     if (cardBody && !document.querySelector('.date-navigation')) {

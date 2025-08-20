@@ -1,0 +1,26 @@
+.mars-photo {
+    margin-bottom: 1.5rem;
+    transition: transform 0.3s ease;
+}
+.mars-photo:hover {
+    transform: translateY(-5px);
+}
+.mars-photo img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.photo-info {
+    background: rgba(0, 0, 0, 0.7);
+    padding: 0.5rem;
+    border-radius: 0 0 8px 8px;
+    margin-top: -4px;
+}
+.rover-stats {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
