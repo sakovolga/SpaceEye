@@ -20,7 +20,15 @@ The app caches API responses for better performance and supports date/sol select
 - Caching for optimization.  
 
 ---
+## 🌠 Screenshots
 
+### Astronomy Picture of the Day (APOD)
+![APOD Example](https://apod.nasa.gov/apod/image/2501/MercuryTransit2025.jpg)
+
+### Mars Rover Photos
+![Mars Rover Example](https://mars.nasa.gov/system/news_items/main_images/9513_PIA26324-FigureA-web.jpg)
+
+---
 ## ⚙️ Installation & Setup
 
 ### 1. Clone the repository
