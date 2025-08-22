@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Вход - SpaceEye</title>
+    <title>Login - SpaceEye</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -73,32 +73,32 @@
 </head>
 <body>
     <div class="login-form">
-        <h2>Вход в систему</h2>
-        
+        <h2>Login</h2>
+
         {% if form.errors %}
             <div class="error">
                 {{ form.errors }}
             </div>
         {% endif %}
-        
+
         <form method="post">
             {% csrf_token %}
-            
+
             <div class="form-group">
-                <label for="{{ form.username.id_for_label }}">Имя пользователя:</label>
+                <label for="{{ form.username.id_for_label }}">Username:</label>
                 {{ form.username }}
             </div>
-            
+
             <div class="form-group">
-                <label for="{{ form.password.id_for_label }}">Пароль:</label>
+                <label for="{{ form.password.id_for_label }}">Password:</label>
                 {{ form.password }}
             </div>
-            
-            <button type="submit">Войти</button>
+
+            <button type="submit">Login</button>
         </form>
-        
+
         <div class="login-link">
-            <p>Нет аккаунта? <a href="{% url 'main:register' %}">Зарегистрироваться</a></p>
+            <p>Don't have an account? <a href="{% url 'main:register' %}">Register</a></p>
         </div>
     </div>
 </body>

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Регистрация - SpaceEye</title>
+    <title>Registration - SpaceEye</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -153,9 +153,9 @@
 <body>
     <div class="register-container">
         <div class="register-form">
-            <h2>Регистрация</h2>
+            <h2>Registration</h2>
 
-            <!-- Сообщения -->
+            <!-- Messages -->
             {% if messages %}
                 <div class="messages">
                     {% for message in messages %}
@@ -166,7 +166,7 @@
                 </div>
             {% endif %}
 
-            <!-- Ошибки формы -->
+            <!-- Form errors -->
             {% if form.non_field_errors %}
                 <div class="form-errors">
                     {{ form.non_field_errors }}
@@ -177,7 +177,7 @@
                 {% csrf_token %}
 
                 <div class="form-group">
-                    <label for="{{ form.username.id_for_label }}">Имя пользователя:</label>
+                    <label for="{{ form.username.id_for_label }}">Username:</label>
                     {{ form.username }}
                     {% if form.username.errors %}
                         <div class="form-errors">
@@ -200,7 +200,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="{{ form.first_name.id_for_label }}">Имя:</label>
+                    <label for="{{ form.first_name.id_for_label }}">First Name:</label>
                     {{ form.first_name }}
                     {% if form.first_name.errors %}
                         <div class="form-errors">
@@ -210,7 +210,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="{{ form.last_name.id_for_label }}">Фамилия:</label>
+                    <label for="{{ form.last_name.id_for_label }}">Last Name:</label>
                     {{ form.last_name }}
                     {% if form.last_name.errors %}
                         <div class="form-errors">
@@ -220,7 +220,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="{{ form.password1.id_for_label }}">Пароль:</label>
+                    <label for="{{ form.password1.id_for_label }}">Password:</label>
                     {{ form.password1 }}
                     {% if form.password1.errors %}
                         <div class="form-errors">
@@ -233,7 +233,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="{{ form.password2.id_for_label }}">Подтверждение пароля:</label>
+                    <label for="{{ form.password2.id_for_label }}">Confirm Password:</label>
                     {{ form.password2 }}
                     {% if form.password2.errors %}
                         <div class="form-errors">
@@ -245,11 +245,11 @@
                     {% endif %}
                 </div>
 
-                <button type="submit" class="btn-register">Зарегистрироваться</button>
+                <button type="submit" class="btn-register">Register</button>
             </form>
 
             <div class="login-link">
-                <p>Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a></p>
+                <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
             </div>
         </div>
     </div>
