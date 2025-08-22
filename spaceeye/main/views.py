@@ -2,11 +2,14 @@ from datetime import timedelta, datetime
 
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from django.shortcuts import render
 from django.core.cache import cache
 from django.conf import settings
 import requests
 import logging
+from django.shortcuts import render, redirect
+from django.contrib.auth import login
+from django.contrib import messages
+from .forms import CustomUserCreationForm
 
 logger = logging.getLogger(__name__)
 
@@ -168,3 +171,20 @@ def api_data_ajax(request):
         data = {'error': 'Invalid API type'}
 
     return JsonResponse(data)
+
+
+def register_view(request):
+    """Регистрация нового пользователя"""
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)  # Автоматически входим после регистрации
+            messages.success(request, f'Добро пожаловать, {user.username}! Вы успешно зарегистрировались.')
+            return redirect('main:index')
+        else:
+            messages.error(request, 'Пожалуйста, исправьте ошибки в форме.')
+    else:
+        form = CustomUserCreationForm()
+
+    return render(request, 'registration/register.html', {'form': form})
