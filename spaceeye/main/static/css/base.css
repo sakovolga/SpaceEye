@@ -2,12 +2,109 @@ body {
     background: linear-gradient(135deg, #0a0a0a 0%, #1a0a2e 100%);
     color: white;
     min-height: 100vh;
+    margin: 0;
+    padding: 0;
 }
 
 .navbar {
     background: rgba(26, 26, 26, 0.95) !important;
     backdrop-filter: blur(10px);
     border-bottom: 1px solid #333;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 10px 20px !important;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-shrink: 0;
+}
+
+.navbar-brand a {
+    color: white !important;
+    text-decoration: none !important;
+    font-weight: bold;
+    white-space: nowrap;
+    transition: color 0.3s;
+}
+
+.navbar-brand a:hover {
+    color: #667eea !important;
+}
+
+.navbar-nav {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 15px;
+    flex-shrink: 0;
+}
+
+.navbar-nav li {
+    margin: 0;
+}
+
+.navbar-nav a {
+    color: white !important;
+    text-decoration: none !important;
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: all 0.3s;
+    white-space: nowrap;
+}
+
+.navbar-nav a:hover {
+    background-color: rgba(102, 126, 234, 0.2);
+    color: #667eea !important;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: white;
+    flex-shrink: 0;
+    margin-left: auto;
+}
+
+.user-info .username {
+    font-weight: bold;
+    white-space: nowrap;
+    color: #667eea;
+}
+
+.logout-btn {
+    background: linear-gradient(45deg, #e74c3c 0%, #c0392b 100%) !important;
+    color: white !important;
+    padding: 8px 16px !important;
+    border: none !important;
+    border-radius: 6px !important;
+    text-decoration: none !important;
+    font-size: 14px !important;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.3s;
+    font-family: inherit;
+    display: inline-block;
+    line-height: 1;
+}
+
+.logout-btn:hover {
+    background: linear-gradient(45deg, #c0392b 0%, #e74c3c 100%);
+    color: white !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
 }
 
 .card {
@@ -41,13 +138,9 @@ body {
     background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
     border: none;
 }
+
 .btn-primary:hover {
     background: linear-gradient(45deg, #764ba2 0%, #667eea 100%);
-}
-
-.navbar-brand {
-    font-size: 1.5rem;
-    font-weight: bold;
 }
 
 .alert {
@@ -55,13 +148,108 @@ body {
     border: 1px solid rgba(255, 193, 7, 0.3);
     color: #ffc107;
 }
+
 .alert-warning {
     background: rgba(255, 193, 7, 0.1);
     border-color: rgba(255, 193, 7, 0.3);
     color: #ffc107;
 }
+
 .alert-info {
     background: rgba(13, 202, 240, 0.1);
     border-color: rgba(13, 202, 240, 0.3);
     color: #0dcaf0;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+    .navbar {
+        flex-wrap: wrap !important;
+        padding: 10px !important;
+    }
+
+    .navbar-brand {
+        order: 1;
+        flex-basis: 100%;
+        margin-bottom: 10px;
+        justify-content: center;
+    }
+
+    .navbar-nav {
+        order: 2;
+        flex-basis: auto;
+        gap: 10px;
+    }
+
+    .user-info {
+        order: 3;
+        flex-basis: auto;
+        margin-left: auto;
+    }
+
+    .navbar-nav a {
+        font-size: 14px;
+        padding: 6px 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+
+    .navbar-brand a {
+        font-size: 14px;
+    }
+
+    .navbar-nav {
+        gap: 5px;
+    }
+
+    .navbar-nav a {
+        font-size: 12px;
+        padding: 5px 6px;
+    }
+
+    .user-info .username {
+        font-size: 14px;
+    }
+
+    .logout-btn {
+        font-size: 12px;
+        padding: 5px 8px;
+    }
+}
+
+/* Bootstrap navbar overrides */
+.navbar .container-fluid {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+}
+
+.navbar-collapse {
+    flex-grow: 1 !important;
+}
+
+.navbar-nav {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+}
+
+.navbar-nav.me-auto {
+    margin-right: auto !important;
+}
+
+.navbar-text {
+    color: #667eea !important;
+    margin-bottom: 0 !important;
+    font-weight: 500 !important;
+}
+
+.d-flex {
+    display: flex !important;
+    align-items: center !important;
 }
