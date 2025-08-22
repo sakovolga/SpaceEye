@@ -1,5 +1,6 @@
 from datetime import timedelta, datetime
 
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.core.cache import cache
@@ -77,7 +78,7 @@ def get_apod_data(date=None):
 
     return data
 
-
+@login_required
 def mars_rover_photos(request):
     sol = request.GET.get('sol', '1000')
     rover = request.GET.get('rover', 'curiosity')
