@@ -8,7 +8,7 @@ class CustomUserCreationForm(UserCreationForm):
         required=True,
         widget=forms.EmailInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Введите email'
+            'placeholder': 'Enter email'
         })
     )
     first_name = forms.CharField(
@@ -16,7 +16,7 @@ class CustomUserCreationForm(UserCreationForm):
         required=False,
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Имя (необязательно)'
+            'placeholder': 'First name (optional)'
         })
     )
     last_name = forms.CharField(
@@ -24,7 +24,7 @@ class CustomUserCreationForm(UserCreationForm):
         required=False,
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Фамилия (необязательно)'
+            'placeholder': 'Last name (optional)'
         })
     )
 
@@ -34,18 +34,18 @@ class CustomUserCreationForm(UserCreationForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Добавляем Bootstrap классы к полям формы
+        # Add Bootstrap classes to form fields
         self.fields['username'].widget.attrs.update({
             'class': 'form-control',
-            'placeholder': 'Имя пользователя'
+            'placeholder': 'Username'
         })
         self.fields['password1'].widget.attrs.update({
             'class': 'form-control',
-            'placeholder': 'Пароль'
+            'placeholder': 'Password'
         })
         self.fields['password2'].widget.attrs.update({
             'class': 'form-control',
-            'placeholder': 'Подтверждение пароля'
+            'placeholder': 'Confirm password'
         })
 
     def save(self, commit=True):
