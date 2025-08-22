@@ -1,11 +1,16 @@
 from django.test import TestCase, Client
 from django.urls import reverse
+from django.contrib.auth.models import User
 from unittest.mock import patch, Mock
 
 
 class SpaceEyeTestCase(TestCase):
     def setUp(self):
         self.client = Client()
+        self.user = User.objects.create_user(
+            username='testuser',
+            password='testpass123'
+        )
 
     def test_index_page_loads(self):
         response = self.client.get(reverse('main:index'))
@@ -30,6 +35,14 @@ class SpaceEyeTestCase(TestCase):
         self.assertContains(response, 'Test Space Image')
 
     def test_mars_rover_page(self):
+        self.client.login(username='testuser', password='testpass123')
+
         response = self.client.get(reverse('main:mars_rover'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Mars Rover Photos')
+
+    def test_mars_rover_page_redirects_when_not_authenticated(self):
+        response = self.client.get(reverse('main:mars_rover'))
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.url.startswith('/accounts/login/') or
+                        response.url.startswith('/login/'))
