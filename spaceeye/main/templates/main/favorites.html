@@ -1,7 +1,7 @@
 {% extends 'main/base.html' %}
 {% load static %}
 
-{% block title %}Избранное - NASA Explorer{% endblock %}
+{% block title %}Favorites - NASA Explorer{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
@@ -9,15 +9,15 @@
         <div class="col-12">
             <h1 class="mb-4">
                 <i class="fas fa-star text-warning"></i>
-                Мое избранное
+                My Favorites
             </h1>
 
-            <!-- Фильтры -->
+            <!-- Filters -->
             <div class="mb-4">
                 <div class="btn-group" role="group">
                     <a href="{% url 'main:favorites' %}"
                        class="btn {% if not filter_type %}btn-primary{% else %}btn-outline-primary{% endif %}">
-                        Все
+                        All
                     </a>
                     <a href="{% url 'main:favorites' %}?type=apod"
                        class="btn {% if filter_type == 'apod' %}btn-primary{% else %}btn-outline-primary{% endif %}">
@@ -57,21 +57,21 @@
 
                                     <div class="mt-auto">
                                         <small class="text-muted d-block mb-2">
-                                            Добавлено: {{ favorite.created_at|date:"d.m.Y H:i" }}
+                                            Added: {{ favorite.created_at|date:"M d, Y H:i" }}
                                         </small>
 
                                         <div class="d-flex gap-2">
-                                            <!-- Кнопка просмотра в модальном окне -->
+                                            <!-- View button for modal -->
                                             <button class="btn btn-outline-primary btn-sm flex-grow-1"
                                                     data-bs-toggle="modal"
                                                     data-bs-target="#imageModal{{ favorite.id }}">
-                                                <i class="fas fa-eye"></i> Просмотр
+                                                <i class="fas fa-eye"></i> View
                                             </button>
 
-                                            <!-- Кнопка удаления -->
+                                            <!-- Delete button -->
                                             <a href="{% url 'main:delete_favorite' favorite.id %}"
                                                class="btn btn-outline-danger btn-sm"
-                                               onclick="return confirm('Удалить из избранного?')">
+                                               onclick="return confirm('Remove from favorites?')">
                                                 <i class="fas fa-trash"></i>
                                             </a>
                                         </div>
@@ -80,7 +80,7 @@
                             </div>
                         </div>
 
-                        <!-- Модальное окно для просмотра изображения -->
+                        <!-- Modal for image viewing -->
                         <div class="modal fade" id="imageModal{{ favorite.id }}" tabindex="-1">
                             <div class="modal-dialog modal-lg">
                                 <div class="modal-content">
@@ -95,34 +95,34 @@
                                         <p class="text-start">{{ favorite.description }}</p>
 
                                         {% if favorite.favorite_type == 'apod' and favorite.api_data.date %}
-                                            <p><strong>Дата:</strong> {{ favorite.api_data.date }}</p>
+                                            <p><strong>Date:</strong> {{ favorite.api_data.date }}</p>
                                         {% endif %}
 
                                         {% if favorite.favorite_type == 'mars_rover' %}
                                             <div class="text-start">
                                                 {% if favorite.api_data.rover.name %}
-                                                    <p><strong>Ровер:</strong> {{ favorite.api_data.rover.name }}</p>
+                                                    <p><strong>Rover:</strong> {{ favorite.api_data.rover.name }}</p>
                                                 {% endif %}
                                                 {% if favorite.api_data.camera.full_name %}
-                                                    <p><strong>Камера:</strong> {{ favorite.api_data.camera.full_name }}</p>
+                                                    <p><strong>Camera:</strong> {{ favorite.api_data.camera.full_name }}</p>
                                                 {% endif %}
                                                 {% if favorite.api_data.sol %}
                                                     <p><strong>Sol:</strong> {{ favorite.api_data.sol }}</p>
                                                 {% endif %}
                                                 {% if favorite.api_data.earth_date %}
-                                                    <p><strong>Земная дата:</strong> {{ favorite.api_data.earth_date }}</p>
+                                                    <p><strong>Earth Date:</strong> {{ favorite.api_data.earth_date }}</p>
                                                 {% endif %}
                                             </div>
                                         {% endif %}
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                            Закрыть
+                                            Close
                                         </button>
                                         <a href="{{ favorite.image_url }}"
                                            target="_blank"
                                            class="btn btn-primary">
-                                            <i class="fas fa-external-link-alt"></i> Открыть оригинал
+                                            <i class="fas fa-external-link-alt"></i> Open Original
                                         </a>
                                     </div>
                                 </div>
@@ -133,8 +133,8 @@
             {% else %}
                 <div class="text-center py-5">
                     <i class="fas fa-star fa-3x text-muted mb-3"></i>
-                    <h3 class="text-muted">Избранное пусто</h3>
-                    <p class="text-muted">Добавьте изображения в избранное, чтобы они появились здесь.</p>
+                    <h3 class="text-muted">No Favorites Yet</h3>
+                    <p class="text-muted">Add images to your favorites and they will appear here.</p>
                     <div class="mt-4">
                         <a href="{% url 'main:index' %}" class="btn btn-primary me-2">
                             <i class="fas fa-image"></i> NASA APOD
