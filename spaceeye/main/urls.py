@@ -12,4 +12,9 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='main/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='index'), name='logout'),
     path('register/', views.register_view, name='register'),
+
+    path('favorites/', views.favorites_list, name='favorites'),
+    path('favorites/add/', views.add_to_favorites, name='add_to_favorites'),
+    path('favorites/remove/', views.remove_from_favorites, name='remove_from_favorites'),
+    path('favorites/delete/<int:favorite_id>/', views.delete_favorite, name='delete_favorite'),
 ]

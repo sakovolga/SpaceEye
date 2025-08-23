@@ -1,0 +1,128 @@
+/* Добавить в main.css или создать отдельный файл */
+
+/* Стили для кнопки избранного поверх изображения */
+.image-container {
+    position: relative;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.image-container .favorite-btn {
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 193, 7, 0.8);
+    backdrop-filter: blur(4px);
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.image-container .favorite-btn:hover {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: #000;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
+}
+
+.image-container .favorite-btn.btn-warning {
+    background-color: rgba(255, 193, 7, 0.9);
+    color: #000;
+}
+
+.image-container .favorite-btn.btn-outline-warning {
+    color: #ffc107;
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+/* Анимация при наведении на изображение */
+.image-container:hover .nasa-image {
+    transform: scale(1.02);
+    transition: transform 0.3s ease;
+}
+
+.nasa-image {
+    border-radius: 0.5rem;
+    transition: transform 0.3s ease;
+}
+
+/* Улучшенные стили для карточки APOD */
+.card {
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 1rem;
+    overflow: hidden;
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+/* Стили для навигации по датам */
+.date-navigation .btn {
+    transition: all 0.2s ease;
+    border-radius: 50px;
+}
+
+.date-navigation .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* Адаптивные стили */
+@media (max-width: 768px) {
+    .image-container .favorite-btn {
+        font-size: 0.875rem;
+        padding: 0.25rem 0.5rem;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    .d-flex.gap-2 {
+        flex-direction: column;
+    }
+
+    .d-flex.gap-2 > * {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* Эффект для описания */
+.nasa-explanation {
+    line-height: 1.6;
+    text-align: justify;
+}
+
+/* Улучшенный стиль заголовка */
+.nasa-title {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+/* Стили для видео контейнера */
+.ratio {
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Hover эффект для всей карточки */
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+}
+
+/* Стили для призыва к авторизации */
+.btn-outline-secondary {
+    border-color: #6c757d;
+    color: #6c757d;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: white;
+}

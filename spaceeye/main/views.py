@@ -6,12 +6,15 @@ from django.core.cache import cache
 from django.conf import settings
 import requests
 import logging
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
 from django.contrib import messages
 from .forms import CustomUserCreationForm
+from .models import Favorite
+import json
 
 logger = logging.getLogger(__name__)
+
 
 def index(request):
     selected_date = request.GET.get('date')
@@ -23,6 +26,15 @@ def index(request):
             selected_date = None
 
     nasa_data = get_apod_data(selected_date)
+
+    # Проверяем, добавлено ли в избранное (для авторизованных пользователей)
+    is_favorited = False
+    if request.user.is_authenticated and nasa_data.get('url'):
+        is_favorited = Favorite.objects.filter(
+            user=request.user,
+            favorite_type='apod',
+            image_url=nasa_data['url']
+        ).exists()
 
     date_options = []
     today = datetime.now().date()
@@ -36,7 +48,8 @@ def index(request):
     context = {
         'nasa_data': nasa_data,
         'selected_date': selected_date,
-        'date_options': date_options
+        'date_options': date_options,
+        'is_favorited': is_favorited
     }
 
     return render(request, 'main/index.html', context)
@@ -81,6 +94,7 @@ def get_apod_data(date=None):
 
     return data
 
+
 @login_required
 def mars_rover_photos(request):
     sol = request.GET.get('sol', '1000')
@@ -92,6 +106,15 @@ def mars_rover_photos(request):
         sol = 1000
 
     photos_data = get_mars_rover_data(rover, sol)
+
+    # Добавляем информацию о том, какие фото в избранном
+    if photos_data.get('photos'):
+        for photo in photos_data['photos']:
+            photo['is_favorited'] = Favorite.objects.filter(
+                user=request.user,
+                favorite_type='mars_rover',
+                image_url=photo['img_src']
+            ).exists()
 
     context = {
         'photos_data': photos_data,
@@ -157,6 +180,7 @@ def get_mars_rover_data(rover, sol):
 
     return data
 
+
 def api_data_ajax(request):
     api_type = request.GET.get('type')
 
@@ -171,6 +195,111 @@ def api_data_ajax(request):
         data = {'error': 'Invalid API type'}
 
     return JsonResponse(data)
+
+
+@login_required
+def add_to_favorites(request):
+    """Добавить в избранное через AJAX"""
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            favorite_type = data.get('type')
+            api_data = data.get('data')
+
+            if favorite_type == 'apod':
+                title = api_data.get('title', 'NASA APOD')
+                description = api_data.get('explanation', '')[:500]  # Ограничиваем длину
+                image_url = api_data.get('url')
+            elif favorite_type == 'mars_rover':
+                camera_name = api_data.get('camera', {}).get('full_name', 'Unknown Camera')
+                rover_name = api_data.get('rover', {}).get('name', 'Unknown Rover')
+                title = f"{rover_name} - {camera_name}"
+                description = f"Sol: {api_data.get('sol', 'Unknown')}, Earth Date: {api_data.get('earth_date', 'Unknown')}"
+                image_url = api_data.get('img_src')
+            else:
+                return JsonResponse({'success': False, 'error': 'Invalid type'})
+
+            if not image_url:
+                return JsonResponse({'success': False, 'error': 'No image URL provided'})
+
+            favorite, created = Favorite.objects.get_or_create(
+                user=request.user,
+                favorite_type=favorite_type,
+                image_url=image_url,
+                defaults={
+                    'title': title,
+                    'description': description,
+                    'api_data': api_data
+                }
+            )
+
+            if created:
+                return JsonResponse({'success': True, 'action': 'added'})
+            else:
+                return JsonResponse({'success': False, 'error': 'Already in favorites'})
+
+        except Exception as e:
+            logger.error(f"Error adding to favorites: {str(e)}")
+            return JsonResponse({'success': False, 'error': 'Server error'})
+
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+
+@login_required
+def remove_from_favorites(request):
+    """Удалить из избранного через AJAX"""
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            favorite_type = data.get('type')
+            image_url = data.get('image_url')
+
+            if not image_url:
+                return JsonResponse({'success': False, 'error': 'No image URL provided'})
+
+            deleted, _ = Favorite.objects.filter(
+                user=request.user,
+                favorite_type=favorite_type,
+                image_url=image_url
+            ).delete()
+
+            if deleted:
+                return JsonResponse({'success': True, 'action': 'removed'})
+            else:
+                return JsonResponse({'success': False, 'error': 'Not found in favorites'})
+
+        except Exception as e:
+            logger.error(f"Error removing from favorites: {str(e)}")
+            return JsonResponse({'success': False, 'error': 'Server error'})
+
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+
+@login_required
+def favorites_list(request):
+    """Показать список избранного"""
+    favorites = Favorite.objects.filter(user=request.user)
+
+    # Фильтрация по типу
+    filter_type = request.GET.get('type')
+    if filter_type in ['apod', 'mars_rover']:
+        favorites = favorites.filter(favorite_type=filter_type)
+
+    context = {
+        'favorites': favorites,
+        'filter_type': filter_type
+    }
+
+    return render(request, 'main/favorites.html', context)
+
+
+@login_required
+def delete_favorite(request, favorite_id):
+    """Удалить избранное (из страницы избранного)"""
+    favorite = get_object_or_404(Favorite, id=favorite_id, user=request.user)
+    favorite.delete()
+    messages.success(request, 'Удалено из избранного.')
+    return redirect('main:favorites')
 
 
 def register_view(request):
