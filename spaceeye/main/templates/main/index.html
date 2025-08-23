@@ -91,38 +91,17 @@
                             </div>
                             <div class="col-lg-4">
                                 <h2 class="card-title nasa-title">{{ nasa_data.title }}</h2>
-                                <p class="text-muted mb-3">
-                                    <strong>📅 {{ nasa_data.date }}</strong>
-                                </p>
 
-                                <!-- Action buttons -->
-                                <div class="mb-3 d-flex gap-2 flex-wrap">
+                                <!-- Date and HD Version button in one line -->
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <p class="text-muted mb-0">
+                                        <strong>📅 {{ nasa_data.date }}</strong>
+                                    </p>
                                     {% if nasa_data.media_type == 'image' and nasa_data.hdurl %}
                                         <a href="{{ nasa_data.hdurl }}"
                                            target="_blank"
-                                           class="btn btn-primary">
+                                           class="btn btn-primary btn-sm">
                                             🔍 View HD Version
-                                        </a>
-                                    {% endif %}
-
-                                    {% if user.is_authenticated %}
-                                        <!-- Large favorite button -->
-                                        <button class="favorite-btn btn
-                                                      {% if is_favorited %}btn-warning{% else %}btn-outline-warning{% endif %}"
-                                                data-action="{% if is_favorited %}remove{% else %}add{% endif %}"
-                                                data-type="apod"
-                                                {% if is_favorited %}data-image-url="{{ nasa_data.url }}"{% endif %}
-                                                title="{% if is_favorited %}Remove from favorites{% else %}Add to favorites{% endif %}">
-                                            {% if is_favorited %}
-                                                <i class="fas fa-star"></i> Favorited
-                                            {% else %}
-                                                <i class="far fa-star"></i> Add to Favorites
-                                            {% endif %}
-                                        </button>
-                                    {% else %}
-                                        <!-- Login prompt -->
-                                        <a href="{% url 'login' %}" class="btn btn-outline-secondary">
-                                            <i class="fas fa-sign-in-alt"></i> Login to save
                                         </a>
                                     {% endif %}
                                 </div>

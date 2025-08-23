@@ -6,7 +6,7 @@ class FavoritesManager {
     }
 
     setupEventListeners() {
-        // Обработчик для кнопок добавления/удаления из избранного
+        // Handler for add/remove from favorites buttons
         document.addEventListener('click', (e) => {
             if (e.target.classList.contains('favorite-btn') || e.target.closest('.favorite-btn')) {
                 e.preventDefault();
@@ -21,7 +21,7 @@ class FavoritesManager {
         const type = button.dataset.type;
         const imageUrl = button.dataset.imageUrl;
 
-        // Блокируем кнопку во время запроса
+        // Disable button during request
         button.disabled = true;
         const originalText = button.innerHTML;
         button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
@@ -31,7 +31,7 @@ class FavoritesManager {
 
             if (action === 'add') {
                 url = '/favorites/add/';
-                // Получаем данные из data-атрибутов или глобальных переменных
+                // Get data from data-attributes or global variables
                 if (type === 'apod') {
                     data = {
                         type: 'apod',
@@ -65,19 +65,19 @@ class FavoritesManager {
             if (result.success) {
                 if (result.action === 'added') {
                     this.updateButtonToRemove(button, imageUrl);
-                    this.showToast('Добавлено в избранное!', 'success');
+                    this.showToast('Added to favorites!', 'success');
                 } else if (result.action === 'removed') {
                     this.updateButtonToAdd(button, type);
-                    this.showToast('Удалено из избранного!', 'info');
+                    this.showToast('Removed from favorites!', 'info');
                 }
             } else {
-                this.showToast(result.error || 'Произошла ошибка', 'error');
+                this.showToast(result.error || 'An error occurred', 'error');
             }
         } catch (error) {
             console.error('Error:', error);
-            this.showToast('Произошла ошибка при выполнении операции', 'error');
+            this.showToast('An error occurred while performing the operation', 'error');
         } finally {
-            // Восстанавливаем кнопку
+            // Restore button
             button.disabled = false;
             if (!button.dataset.updated) {
                 button.innerHTML = originalText;
@@ -91,7 +91,7 @@ class FavoritesManager {
         button.classList.remove('btn-outline-warning');
         button.classList.add('btn-warning');
         button.innerHTML = '<i class="fas fa-star"></i>';
-        button.title = 'Удалить из избранного';
+        button.title = 'Remove from favorites';
         button.dataset.updated = 'true';
     }
 
@@ -101,12 +101,12 @@ class FavoritesManager {
         button.classList.remove('btn-warning');
         button.classList.add('btn-outline-warning');
         button.innerHTML = '<i class="far fa-star"></i>';
-        button.title = 'Добавить в избранное';
+        button.title = 'Add to favorites';
         button.dataset.updated = 'true';
     }
 
     getApodDataFromPage() {
-        // Извлекаем данные APOD из DOM
+        // Extract APOD data from DOM
         const title = document.querySelector('h1')?.textContent || '';
         const explanation = document.querySelector('.nasa-explanation')?.textContent || '';
         const imageUrl = document.querySelector('.nasa-image')?.src || '';
@@ -127,7 +127,7 @@ class FavoritesManager {
     }
 
     showToast(message, type = 'info') {
-        // Создаем toast уведомление
+        // Create toast notification
         const toastId = 'toast-' + Date.now();
         const toastClass = type === 'success' ? 'bg-success' :
                           type === 'error' ? 'bg-danger' : 'bg-info';
@@ -145,7 +145,7 @@ class FavoritesManager {
             </div>
         `;
 
-        // Добавляем toast в контейнер
+        // Add toast to container
         let toastContainer = document.getElementById('toast-container');
         if (!toastContainer) {
             toastContainer = document.createElement('div');
@@ -157,7 +157,7 @@ class FavoritesManager {
 
         toastContainer.insertAdjacentHTML('beforeend', toastHtml);
 
-        // Показываем toast
+        // Show toast
         const toastElement = document.getElementById(toastId);
         const toast = new bootstrap.Toast(toastElement, {
             autohide: true,
@@ -165,19 +165,19 @@ class FavoritesManager {
         });
         toast.show();
 
-        // Удаляем toast из DOM после скрытия
+        // Remove toast from DOM after hiding
         toastElement.addEventListener('hidden.bs.toast', () => {
             toastElement.remove();
         });
     }
 }
 
-// Инициализируем менеджер избранного при загрузке DOM
+// Initialize favorites manager when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     new FavoritesManager();
 });
 
-// Глобальная функция для быстрого добавления в избранное
+// Global function for quick adding to favorites
 window.addToFavorites = function(type, data) {
     const manager = new FavoritesManager();
     const fakeButton = {

@@ -27,7 +27,6 @@ def index(request):
 
     nasa_data = get_apod_data(selected_date)
 
-    # Проверяем, добавлено ли в избранное (для авторизованных пользователей)
     is_favorited = False
     if request.user.is_authenticated and nasa_data.get('url'):
         is_favorited = Favorite.objects.filter(
@@ -107,7 +106,6 @@ def mars_rover_photos(request):
 
     photos_data = get_mars_rover_data(rover, sol)
 
-    # Добавляем информацию о том, какие фото в избранном
     if photos_data.get('photos'):
         for photo in photos_data['photos']:
             photo['is_favorited'] = Favorite.objects.filter(
@@ -199,7 +197,7 @@ def api_data_ajax(request):
 
 @login_required
 def add_to_favorites(request):
-    """Добавить в избранное через AJAX"""
+    """Add to favorites via AJAX"""
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
@@ -208,7 +206,7 @@ def add_to_favorites(request):
 
             if favorite_type == 'apod':
                 title = api_data.get('title', 'NASA APOD')
-                description = api_data.get('explanation', '')[:500]  # Ограничиваем длину
+                description = api_data.get('explanation', '')[:500]  # Limit length
                 image_url = api_data.get('url')
             elif favorite_type == 'mars_rover':
                 camera_name = api_data.get('camera', {}).get('full_name', 'Unknown Camera')
@@ -247,7 +245,6 @@ def add_to_favorites(request):
 
 @login_required
 def remove_from_favorites(request):
-    """Удалить из избранного через AJAX"""
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
@@ -277,10 +274,8 @@ def remove_from_favorites(request):
 
 @login_required
 def favorites_list(request):
-    """Показать список избранного"""
     favorites = Favorite.objects.filter(user=request.user)
 
-    # Фильтрация по типу
     filter_type = request.GET.get('type')
     if filter_type in ['apod', 'mars_rover']:
         favorites = favorites.filter(favorite_type=filter_type)
@@ -295,24 +290,22 @@ def favorites_list(request):
 
 @login_required
 def delete_favorite(request, favorite_id):
-    """Удалить избранное (из страницы избранного)"""
     favorite = get_object_or_404(Favorite, id=favorite_id, user=request.user)
     favorite.delete()
-    messages.success(request, 'Удалено из избранного.')
+    messages.success(request, 'Removed from favorites.')
     return redirect('main:favorites')
 
 
 def register_view(request):
-    """Регистрация нового пользователя"""
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)  # Автоматически входим после регистрации
-            messages.success(request, f'Добро пожаловать, {user.username}! Вы успешно зарегистрировались.')
+            login(request, user)
+            messages.success(request, f'Welcome, {user.username}! You have successfully registered.')
             return redirect('main:index')
         else:
-            messages.error(request, 'Пожалуйста, исправьте ошибки в форме.')
+            messages.error(request, 'Please correct the errors in the form.')
     else:
         form = CustomUserCreationForm()
 
