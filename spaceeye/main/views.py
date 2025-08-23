@@ -106,9 +106,7 @@ def mars_rover_photos(request):
 
     photos_data = get_mars_rover_data(rover, sol)
 
-    # Check favorites for authenticated users
     if request.user.is_authenticated and photos_data.get('photos'):
-        # Get all favorited image URLs for this user and type
         favorited_urls = set(
             Favorite.objects.filter(
                 user=request.user,
@@ -116,7 +114,6 @@ def mars_rover_photos(request):
             ).values_list('image_url', flat=True)
         )
 
-        # Mark each photo as favorited or not
         for photo in photos_data['photos']:
             photo['is_favorited'] = photo['img_src'] in favorited_urls
 
@@ -203,7 +200,6 @@ def api_data_ajax(request):
 
 @login_required
 def add_to_favorites(request):
-    """Add to favorites via AJAX"""
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
