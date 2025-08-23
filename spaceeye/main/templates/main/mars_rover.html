@@ -83,11 +83,30 @@
             <div class="row">
                 {% for photo in photos_data.photos %}
                     <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mb-4">
-                        <div class="mars-photo">
+                        <div class="mars-photo position-relative">
                             <img src="{{ photo.img_src }}"
                                  alt="Mars photo by {{ photo.rover.name }}"
-                                 onclick="openPhotoModal('{{ photo.img_src }}', '{{ photo.rover.name }}', '{{ photo.camera.full_name }}', '{{ photo.earth_date }}', {{ photo.sol }})"
+                                 onclick="openPhotoModal('{{ photo.img_src }}', '{{ photo.rover.name }}', '{{ photo.camera.full_name }}', '{{ photo.earth_date }}', {{ photo.sol }}, {{ photo.id }})"
                                  loading="lazy">
+
+                            <!-- Favorite button over image (authenticated users only) -->
+                            {% if user.is_authenticated %}
+                                <button class="favorite-btn btn position-absolute top-0 end-0 m-2
+                                              {% if photo.is_favorited %}btn-warning{% else %}btn-outline-warning{% endif %}"
+                                        data-action="{% if photo.is_favorited %}remove{% else %}add{% endif %}"
+                                        data-type="mars_rover"
+                                        data-image-url="{{ photo.img_src }}"
+                                        data-photo-data='{"id": {{ photo.id }}, "img_src": "{{ photo.img_src }}", "rover": {"name": "{{ photo.rover.name }}"}, "camera": {"full_name": "{{ photo.camera.full_name }}"}, "earth_date": "{{ photo.earth_date }}", "sol": {{ photo.sol }}}'
+                                        title="{% if photo.is_favorited %}Remove from favorites{% else %}Add to favorites{% endif %}"
+                                        style="z-index: 10; font-size: 0.8rem; padding: 0.25rem 0.5rem;">
+                                    {% if photo.is_favorited %}
+                                        <i class="fas fa-star"></i>
+                                    {% else %}
+                                        <i class="far fa-star"></i>
+                                    {% endif %}
+                                </button>
+                            {% endif %}
+
                             <div class="photo-info">
                                 <small>
                                     <strong>📷 {{ photo.camera.name }}</strong><br>
@@ -141,6 +160,20 @@
             <div class="modal-body text-center">
                 <img id="modalPhoto" src="" alt="" class="img-fluid mb-3">
                 <div id="modalPhotoInfo"></div>
+
+                <!-- Favorite button in modal (authenticated users only) -->
+                {% if user.is_authenticated %}
+                    <div class="mt-3">
+                        <button id="modalFavoriteBtn" class="favorite-btn btn btn-outline-warning"
+                                data-action="add"
+                                data-type="mars_rover"
+                                data-image-url=""
+                                data-photo-data="{}"
+                                title="Add to favorites">
+                            <i class="far fa-star"></i> Add to Favorites
+                        </button>
+                    </div>
+                {% endif %}
             </div>
             <div class="modal-footer border-secondary">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -162,6 +195,9 @@ const roverInfo = {
     'perseverance': { maxSol: 1000, status: 'Active', landing: '2021-02-18' }
 };
 
+// Store current photo data for modal
+let currentPhotoData = {};
+
 function updateSolInfo() {
     const roverSelect = document.getElementById('rover');
     const solInput = document.getElementById('sol');
@@ -176,7 +212,7 @@ function updateSolInfo() {
     }
 }
 
-function openPhotoModal(imgSrc, roverName, cameraName, earthDate, sol) {
+function openPhotoModal(imgSrc, roverName, cameraName, earthDate, sol, photoId) {
     document.getElementById('photoModalTitle').textContent = `${roverName} - ${cameraName}`;
     document.getElementById('modalPhoto').src = imgSrc;
     document.getElementById('modalPhoto').alt = `Mars photo by ${roverName}`;
@@ -195,6 +231,39 @@ function openPhotoModal(imgSrc, roverName, cameraName, earthDate, sol) {
         </div>
     `;
 
+    // Store photo data for modal favorite button
+    currentPhotoData = {
+        id: photoId,
+        img_src: imgSrc,
+        rover: { name: roverName },
+        camera: { full_name: cameraName },
+        earth_date: earthDate,
+        sol: sol
+    };
+
+    // Update modal favorite button
+    {% if user.is_authenticated %}
+    const modalFavoriteBtn = document.getElementById('modalFavoriteBtn');
+    if (modalFavoriteBtn) {
+        modalFavoriteBtn.setAttribute('data-image-url', imgSrc);
+        modalFavoriteBtn.setAttribute('data-photo-data', JSON.stringify(currentPhotoData));
+
+        // Check if already favorited by looking at the grid button
+        const gridButton = document.querySelector(`[data-image-url="${imgSrc}"]`);
+        if (gridButton && gridButton.getAttribute('data-action') === 'remove') {
+            modalFavoriteBtn.setAttribute('data-action', 'remove');
+            modalFavoriteBtn.innerHTML = '<i class="fas fa-star"></i> Remove from Favorites';
+            modalFavoriteBtn.className = 'favorite-btn btn btn-warning';
+            modalFavoriteBtn.title = 'Remove from favorites';
+        } else {
+            modalFavoriteBtn.setAttribute('data-action', 'add');
+            modalFavoriteBtn.innerHTML = '<i class="far fa-star"></i> Add to Favorites';
+            modalFavoriteBtn.className = 'favorite-btn btn btn-outline-warning';
+            modalFavoriteBtn.title = 'Add to favorites';
+        }
+    }
+    {% endif %}
+
     const modal = new bootstrap.Modal(document.getElementById('photoModal'));
     modal.show();
 }
@@ -208,6 +277,24 @@ function getRandomPhotos() {
 
     window.location.href = `?rover=${selectedRover}&sol=${randomSol}`;
 }
+
+// Global function to update modal favorite button
+window.updateModalFavoriteButton = function(action, imageUrl) {
+    const modalFavoriteBtn = document.getElementById('modalFavoriteBtn');
+    if (modalFavoriteBtn && modalFavoriteBtn.getAttribute('data-image-url') === imageUrl) {
+        if (action === 'remove') {
+            modalFavoriteBtn.setAttribute('data-action', 'remove');
+            modalFavoriteBtn.innerHTML = '<i class="fas fa-star"></i> Remove from Favorites';
+            modalFavoriteBtn.className = 'favorite-btn btn btn-warning';
+            modalFavoriteBtn.title = 'Remove from favorites';
+        } else {
+            modalFavoriteBtn.setAttribute('data-action', 'add');
+            modalFavoriteBtn.innerHTML = '<i class="far fa-star"></i> Add to Favorites';
+            modalFavoriteBtn.className = 'favorite-btn btn btn-outline-warning';
+            modalFavoriteBtn.title = 'Add to favorites';
+        }
+    }
+};
 
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {

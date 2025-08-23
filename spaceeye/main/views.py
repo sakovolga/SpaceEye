@@ -106,13 +106,19 @@ def mars_rover_photos(request):
 
     photos_data = get_mars_rover_data(rover, sol)
 
-    if photos_data.get('photos'):
-        for photo in photos_data['photos']:
-            photo['is_favorited'] = Favorite.objects.filter(
+    # Check favorites for authenticated users
+    if request.user.is_authenticated and photos_data.get('photos'):
+        # Get all favorited image URLs for this user and type
+        favorited_urls = set(
+            Favorite.objects.filter(
                 user=request.user,
-                favorite_type='mars_rover',
-                image_url=photo['img_src']
-            ).exists()
+                favorite_type='mars_rover'
+            ).values_list('image_url', flat=True)
+        )
+
+        # Mark each photo as favorited or not
+        for photo in photos_data['photos']:
+            photo['is_favorited'] = photo['img_src'] in favorited_urls
 
     context = {
         'photos_data': photos_data,
