@@ -46,14 +46,14 @@
                                              class="img-fluid nasa-image"
                                              loading="lazy">
 
-                                        <!-- Кнопка избранного поверх изображения (только для авторизованных) -->
+                                        <!-- Favorite button over image (authenticated users only) -->
                                         {% if user.is_authenticated %}
                                             <button class="favorite-btn btn position-absolute top-0 end-0 m-2
                                                           {% if is_favorited %}btn-warning{% else %}btn-outline-warning{% endif %}"
                                                     data-action="{% if is_favorited %}remove{% else %}add{% endif %}"
                                                     data-type="apod"
                                                     {% if is_favorited %}data-image-url="{{ nasa_data.url }}"{% endif %}
-                                                    title="{% if is_favorited %}Удалить из избранного{% else %}Добавить в избранное{% endif %}"
+                                                    title="{% if is_favorited %}Remove from favorites{% else %}Add to favorites{% endif %}"
                                                     style="z-index: 10;">
                                                 {% if is_favorited %}
                                                     <i class="fas fa-star"></i>
@@ -70,14 +70,14 @@
                                                 title="{{ nasa_data.title }}">
                                         </iframe>
 
-                                        <!-- Кнопка избранного для видео (если есть thumbnail) -->
+                                        <!-- Favorite button for video (if thumbnail exists) -->
                                         {% if user.is_authenticated and nasa_data.thumbnail_url %}
                                             <button class="favorite-btn btn position-absolute top-0 end-0 m-2
                                                           {% if is_favorited %}btn-warning{% else %}btn-outline-warning{% endif %}"
                                                     data-action="{% if is_favorited %}remove{% else %}add{% endif %}"
                                                     data-type="apod"
                                                     {% if is_favorited %}data-image-url="{{ nasa_data.thumbnail_url }}"{% endif %}
-                                                    title="{% if is_favorited %}Удалить из избранного{% else %}Добавить в избранное{% endif %}"
+                                                    title="{% if is_favorited %}Remove from favorites{% else %}Add to favorites{% endif %}"
                                                     style="z-index: 10;">
                                                 {% if is_favorited %}
                                                     <i class="fas fa-star"></i>
@@ -95,7 +95,7 @@
                                     <strong>📅 {{ nasa_data.date }}</strong>
                                 </p>
 
-                                <!-- Кнопки действий -->
+                                <!-- Action buttons -->
                                 <div class="mb-3 d-flex gap-2 flex-wrap">
                                     {% if nasa_data.media_type == 'image' and nasa_data.hdurl %}
                                         <a href="{{ nasa_data.hdurl }}"
@@ -106,23 +106,23 @@
                                     {% endif %}
 
                                     {% if user.is_authenticated %}
-                                        <!-- Большая кнопка избранного -->
+                                        <!-- Large favorite button -->
                                         <button class="favorite-btn btn
                                                       {% if is_favorited %}btn-warning{% else %}btn-outline-warning{% endif %}"
                                                 data-action="{% if is_favorited %}remove{% else %}add{% endif %}"
                                                 data-type="apod"
                                                 {% if is_favorited %}data-image-url="{{ nasa_data.url }}"{% endif %}
-                                                title="{% if is_favorited %}Удалить из избранного{% else %}Добавить в избранное{% endif %}">
+                                                title="{% if is_favorited %}Remove from favorites{% else %}Add to favorites{% endif %}">
                                             {% if is_favorited %}
-                                                <i class="fas fa-star"></i> В избранном
+                                                <i class="fas fa-star"></i> Favorited
                                             {% else %}
-                                                <i class="far fa-star"></i> Добавить в избранное
+                                                <i class="far fa-star"></i> Add to Favorites
                                             {% endif %}
                                         </button>
                                     {% else %}
-                                        <!-- Призыв к авторизации -->
-                                        <a href="{% url 'main:login' %}" class="btn btn-outline-secondary">
-                                            <i class="fas fa-sign-in-alt"></i> Войдите, чтобы сохранить
+                                        <!-- Login prompt -->
+                                        <a href="{% url 'login' %}" class="btn btn-outline-secondary">
+                                            <i class="fas fa-sign-in-alt"></i> Login to save
                                         </a>
                                     {% endif %}
                                 </div>
@@ -146,7 +146,7 @@
     </div>
 </div>
 
-<!-- Скрипт для передачи данных APOD в JavaScript -->
+<!-- Script to pass APOD data to JavaScript -->
 {% if not nasa_data.error %}
 <script>
     window.currentApodData = {
